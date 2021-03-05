@@ -15,8 +15,11 @@ let roomCentral = new Room("Central", flavourText)
 
 const stairwellText = `You climb the stairwell.
 At the top there is a door that looks like an exit.
-A keypad is next to the door that seems to be required to unlock it.
-If only you knew the code...`
+A keypad is next to the door. A code seems to be required to unlock it.
+If only you knew the code...
+You may take any of the following actions:
+    1) Go back down the stairs
+    2) Try the keypad`
 
 const keypadText = `The power is off - you need to restore it somehow`
 const keypadTextPower = `>> AWAITING INPUT - ATTEMPTS REMAINING: ${attemptsLeft}`
