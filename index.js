@@ -93,17 +93,19 @@ const allItems = {
     "book" : book
 }
 
-roomEast.setContents(["book"]);
+roomWest.setContents(["book"]);
 
 // -------------------------------------------
 
 let wardrobe = new Activity("wardrobe", () => {console.log("Yes, it is a wardrobe")})
+let picture = new Activity("picture", () => {})
 
 const allActivities = {
     "wardrobe" : wardrobe,
 }
 
 roomSouth.setActivities(["wardrobe"]);
+roomWest.setActivities(["picture"]);
 
 // -------------------------------------------
 
@@ -157,7 +159,7 @@ function take(item) {
     // }
     player.bag.push(item)
     removeArrayByValue(player.position.items, item)
-    console.log("You have moved the "+allItems[item].name+" to your bag.")
+    console.log("\x1b[33m%s\x1b[0m", "You have moved the "+allItems[item].name+" to your bag.")
     return true    
 }
 
@@ -196,6 +198,15 @@ function check(activity) {
     allActivities[activity].action();
 }
 
+function help() {
+    console.log("\x1b[36m%s\x1b[0m", "\n"+"\"move\" allows you to move between rooms, \n\
+\"take\" allows you to take objects from the room, \n\
+\"bag\" allows you to check the contents of your bag, \n\
+\"use\" allows you to use items in your possesion, \n\
+\"check\" allows you to examine immovable objects in the room, \n\
+\"help\" brings up this help message.")
+}
+
 // ------------------------------------------- this is a text comment for git
 
 // INITIALISATION
@@ -206,11 +217,8 @@ player.setName(playerName)
 
 console.log("Hello "+player.name)
 
-console.log("\n"+"\"move\" allows you to move between rooms, \n\
-\"take\" allows you to take objects from the room, \n\
-\"bag\" allows you to check the contents of your bag, \n\
-\"use\" allows you to use items in your possesion, \n\
-\"check\" allows you to examine immovable objects in the room.")
+// displays the help message
+help()
 
 // GAME LOOP
 
@@ -219,14 +227,23 @@ while (true) {
     console.log("You are in the "+player.position.name+" room");
     console.log(player.position.flavText);
     // need both conditions below bc empty array returns true and items may not exist
-    if (player.position.items && player.position.items.length) {
+    const ifItems = player.position.items && player.position.items.length
+    if (ifItems) {
         let itemNames = [];
         for (const item of player.position.items) {
             itemNames.push("a "+allItems[item].name);    
         }
-        console.log("There is "+itemNames.join("; ")+ " in this room.");
+        console.log("There is "+itemNames.join("; ")+" in this room you could pick up.");
     }
-    else {console.log("This room is empty.")}
+    const ifActivity = player.position.activity && player.position.activity.length
+    if (ifActivity) {
+        let activityNames = [];
+        for (const activity of player.position.activity) {
+            activityNames.push("a "+allActivities[activity].name);
+        }
+        console.log("There is "+activityNames.join("; ")+" which you can check");
+    }
+    if (!ifItems && !ifActivity) {console.log("This room is empty.")}
     const query = await askQuestion("What would you like to do? ");
     if (!query) {
         continue
@@ -237,7 +254,7 @@ while (true) {
         if (moveSuccess === false) {
             continue
         };
-        console.log("You have moved to the "+player.position.name+" room.")    
+        console.log("\x1b[33m%s\x1b[0m", "You have moved to the "+player.position.name+" room.")    
         continue  
     };
     if (query.startsWith("take")) {
@@ -255,6 +272,10 @@ while (true) {
     }
     if (query === "bag") {
         console.log(player.bag)
+        continue
+    }
+    if (query === "help") {
+        help()
         continue
     }
 }
