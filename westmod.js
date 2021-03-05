@@ -147,13 +147,12 @@ function chair() {
                     2) Examine room`);
     if (req[0] == 1) {
         sit();
+    } else if (req[0] == 2) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`)
     }
-} else if (req[0] == 2) {
-    westroom();
-} else {
-    //run function again
-    console.log(`Invalid`)
-}
 }
 
 function sit() {
@@ -168,215 +167,219 @@ function sit() {
         console.log(`Invalid`);
         sit();
     }
+}
 
-    //not implemented until knife in inventory
-    function cut() {
-        console.log(`You use the knife to cut open the leather. Amongst the 
+//not implemented until knife in inventory
+function cut() {
+    console.log(`You use the knife to cut open the leather. Amongst the 
     stuffing you find a silver key.`);
-        let req = await askQuestion(`What would you like to do?
+    let req = await askQuestion(`What would you like to do?
                         1) Add key to inventory
                         2) Examine room`);
-        if (req[0] == 1) {
-            //add key to inventory
-            key();
-        } else if (req[0] == 2) {
-            westroom();
-        } else {
-            //run function again
-            console.log(`Invalid`);
-            cut();
-        }
-
+    if (req[0] == 1) {
+        //add key to inventory
+        key();
+    } else if (req[0] == 2) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        cut();
     }
 
-    function key() {
-        console.log(`Key added to inventory.`);
-        let req = await askQuestion(`What would you like to do?
+}
+
+function key() {
+    console.log(`Key added to inventory.`);
+    let req = await askQuestion(`What would you like to do?
                         1) Examine room`);
-        if (req[0] == 1) {
-            westroom();
-        } else {
-            //run function again
-            console.log(`Invalid`);
-            key();
-        }
+    if (req[0] == 1) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        key();
     }
+}
 
-    function bookshelves() {
-        console.log(`The bookshelves are filled with books. 
+function bookshelves() {
+    console.log(`The bookshelves are filled with books. 
     They are all brown but some seem to be labelled with a large number on the spine.`);
-        let req = await askQuestion(`What would you like to do?
+    let req = await askQuestion(`What would you like to do?
                     1) Examine books
                     2) Examine room`);
-        if (req[0] == 1) {
-            books();
-        } else if (req[0] == 2) {
-            westroom();
-        } else {
-            //run function again
-            console.log(`Invalid`);
-            bookshelves();
-        }
+    if (req[0] == 1) {
+        books();
+    } else if (req[0] == 2) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        bookshelves();
     }
+}
 
-    function books() {
-        console.log(`There are 12 books labelled with numbers from 1-12.`);
-        let req = await askQuestion(`What would you like to do?
+function books() {
+    console.log(`There are 12 books labelled with numbers from 1-12.`);
+    let req = await askQuestion(`What would you like to do?
     1) Take books
     2) Examine room`);
-        if (req[0] == 1) {
-            takebooks();
-        } else if (req[0] == 2) {
-            westroom();
-        } else {
-            //run function again
-            console.log(`Invalid`);
-            books();
-        }
+    if (req[0] == 1) {
+        takebooks();
+    } else if (req[0] == 2) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        books();
+    }
+}
 
-        function takebooks() {
-            let req = await askQuestion(`What books would you like to take?
+function takebooks() {
+    let req = await askQuestion(`What books would you like to take?
 Enter numbers from 1-12 separated by commas.`)
-                //regex for choosing the books, enter their numbers into array called chosenbooks[]
-        }
+        //regex for choosing the books, enter their numbers into array called chosenbooks[]
+}
 
-        //function to go through all books chosen and describe them, doesnt work yet
-        function labelledbook() {
-            chosenbooks = []
-            words = {
-                1: 'painting',
-                2: 'knife',
-                3: 'drawer',
-                4: 'book',
-                5: 'chair',
-                6: 'paper',
-                7: 'note',
-                8: 'key',
-                9: 'desk',
-                10: 'clock',
-                11: 'pen',
-                12: 'base'
-            }
-            for (let i = 0; i < chosenbooks.length; i++) {
-                console.log(`You open book ${chosenbooks[i]}. You see one highlighted word that says ${words[i]}.`)
-            }
-        }
+//function to go through all books chosen and describe them, doesnt work yet
+function labelledbook() {
+    chosenbooks = []
+    words = {
+        1: 'painting',
+        2: 'knife',
+        3: 'drawer',
+        4: 'book',
+        5: 'chair',
+        6: 'paper',
+        7: 'note',
+        8: 'key',
+        9: 'desk',
+        10: 'clock',
+        11: 'pen',
+        12: 'base'
+    }
+    for (let i = 0; i < chosenbooks.length; i++) {
+        console.log(`You open book ${chosenbooks[i]}. You see one highlighted word that says ${words[i]}.`)
+    }
+}
 
-        function clock() {
-            console.log(`The clock has stopped. You have no concept of time in the bunker.`);
-            let req = await askQuestion(`What would you like to do?
+function clock() {
+    console.log(`The clock has stopped. You have no concept of time in the bunker.`);
+    let req = await askQuestion(`What would you like to do?
                     1) Take clock
                     2) Read time
                     3) Examine room`);
-            if (req[0] == 1) {
-                takeclock();
-            } else if (req[0] == 2) {
-                readtime();
-            } else if (req[0] == 3) {
-                westroom();
-            } else {
-                //run function again
-                console.log(`Invalid`);
-                clock();
-            }
+    if (req[0] == 1) {
+        takeclock();
+    } else if (req[0] == 2) {
+        readtime();
+    } else if (req[0] == 3) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        clock();
+    }
 
-        }
+}
 
-        function takeclock() {
-            console.log(`You have no batteries to replace the dead ones. Time is of no use to you.`)
-            let req = await askQuestion(`What would you like to do?
+function takeclock() {
+    console.log(`You have no batteries to replace the dead ones. Time is of no use to you.`)
+    let req = await askQuestion(`What would you like to do?
                         1) Add clock to inventory
                         2) Read time
                         3) Examine room`);
-            if (req[0] == 1) {
-                //add clock to inventory
-                addclock();
-            } else if (req[0] == 2) {
-                readtime();
-            } else if (req[0] == 3) {
-                westroom();
-            } else {
-                //run function again
-                console.log(`Invalid`);
-                takeclock();
-            }
-        }
+    if (req[0] == 1) {
+        //add clock to inventory
+        addclock();
+    } else if (req[0] == 2) {
+        readtime();
+    } else if (req[0] == 3) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        takeclock();
+    }
+}
 
-        //need to be able to take back out of inventory if they havent read the time 
-        function addclock() {
-            console.log(`Clock added to inventory`);
-            let req = await askQuestion(`What would you like to do?
+//need to be able to take back out of inventory if they havent read the time 
+function addclock() {
+    console.log(`Clock added to inventory`);
+    let req = await askQuestion(`What would you like to do?
                         1) Examine room`);
-            if (req[0] == 1) {
-                westroom();
-            } else {
-                //run function again
-                console.log(`Invalid`);
-                addclock();
-            }
+    if (req[0] == 1) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        addclock();
+    }
+}
 
-            function readtime() {
-                console.log(`The clock is stuck at 8:00:25.`)
-                let req = await askQuestion(`What would you like to do?
+function readtime() {
+    console.log(`The clock is stuck at 8:00:25.`)
+    let req = await askQuestion(`What would you like to do?
                         1) Add clock to inventory
                         2) Examine room`);
-                if (req[0] == 1) {
-                    addclock();
-                } else if (req[0] == 2) {
-                    westroom();
-                } else {
-                    //run function again
-                    console.log(`Invalid`);
-                    readtime();
-                }
+    if (req[0] == 1) {
+        addclock();
+    } else if (req[0] == 2) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        readtime();
+    }
+}
 
-                function painting() {
-                    console.log(`The painting depicts a coastal landscape with the sun 
+function painting() {
+    console.log(`The painting depicts a coastal landscape with the sun 
     setting on the horizon.`);
-                    let req = await askQuestion(`What would you like to do?
+    let req = await askQuestion(`What would you like to do?
                     1) Take painting
                     2) Examine room`);
-                    if (req[0] == 1) {
-                        takepainting();
-                    }
-                    if (req[0] == 2) {
-                        westroom();
-                    } else {
-                        //run function again
-                        console.log(`Invalid`);
-                        painting();
-                    }
-                }
+    if (req[0] == 1) {
+        takepainting();
+    }
+    if (req[0] == 2) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        painting();
+    }
+}
 
-                function takepainting() {
-                    console.log(`You notice an object taped to the back 
+function takepainting() {
+    console.log(`You notice an object taped to the back 
                         of the frame. You remove it and see that it is a knife.`);
-                    let req = await askQuestion(`What would you like to do?
+    let req = await askQuestion(`What would you like to do?
                         1) Add knife to inventory
                         2) Examine room`);
-                    if (req[0] == 1) {
-                        //add to inventory
-                        addknife();
-                    } else if (req[0] == 2) {
-                        westroom;
-                    } else {
-                        //run function again
-                        console.log(`Invalid`);
-                        takepainting();
-                    }
-                }
+    if (req[0] == 1) {
+        //add to inventory
+        addknife();
+    } else if (req[0] == 2) {
+        westroom;
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        takepainting();
+    }
+}
 
-                function addknife() { //have to remove knife from being behind the painting once this is called
-                    console.log(`Knife added to inventory.`);
-                    let req = await askQuestion(`What would you like to do?
+function addknife() { //have to remove knife from being behind the painting once this is called
+    console.log(`Knife added to inventory.`);
+    let req = await askQuestion(`What would you like to do?
                         1) Examine room`);
-                    if (req[0] == 1) {
-                        westroom();
-                    } else {
-                        //run function again
-                        console.log(`Invalid`);
-                        addknife();
-                    }
-                }
+    if (req[0] == 1) {
+        westroom();
+    } else {
+        //run function again
+        console.log(`Invalid`);
+        addknife();
+    }
+}
 
-                export { enterwest }
+export { enterwest }
