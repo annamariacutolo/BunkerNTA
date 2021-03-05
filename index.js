@@ -3,10 +3,11 @@
 import readline from 'readline';
 
 class Room {
-    constructor(name, flavText, locked) {
+    constructor(name, flavText, locked, description) {
         this.name = name;
         this.flavText = flavText;
         this.locked = locked;
+        this.description = description;
     }
     setAdjoined(adjoined) {
         this.adjoined = adjoined;
@@ -39,27 +40,37 @@ class Activity {
 
 let roomSouth = new Room("South", 
 "This room loosely resembles a bedroom", 
-false
+false,
+"this is the south room"
 )
 
 let roomCentral = new Room("Central",
-"This is flavour text for C room",
-true
+"You enter a large, empty room. There are doors in each direction",
+true,
+`The soft light from the lamps above provides poor but adequate visibility.
+There's a stairwell in the centre that looks like you could use it to get to the surface above.
+You see that there are four doors leading to rooms labelled north to south that you could go to.
+Your living quarters appear to have been in the south room.`
 )
 
 let roomNorth = new Room("North",
-"This is flavour text for N room",
-true
+"This room is filled with boxes and shelving",
+true,
+`this is the north room`
 )
 
 let roomEast = new Room("East",
-"This is flavour text for E room",
-false
+"This room has pieces of machinery adoring its walls",
+false,
+``
 )
 
 let roomWest = new Room("West",
-"This is flavour text for W room",
-false
+"This room appears to be a library",
+false,
+`You see a wooden desk and chair in the centre 
+of the room. On the green walls hang a large landscape painting 
+and a clock. There are several bookshelves full of books.`
 )
 
 roomCentral.setAdjoined({
@@ -220,7 +231,7 @@ function moveValid(userResponse) {
     let regEx = /./;
     for (let i = 0; i < allDirections.length; i++) {
         regEx = RegExp(`(move)|(go) .*${allDirections[i]}`);
-        if (regEx.test(userResponse.toLowercase())) {
+        if (regEx.test(userResponse.toLowerCase())) {
             return move(allDirections[i])
         }
     }
@@ -232,7 +243,7 @@ function takeValid(userResponse) {
     let regEx = /./;
     for (let i = 0; i < allItemsList.length; i++) {
         regEx = RegExp(`take .*${allItemsList[i]}`);
-        if (regEx.test(userResponse.toLowercase())) {
+        if (regEx.test(userResponse.toLowerCase())) {
             return take(allItemsList[i]);
         }
     }
@@ -244,7 +255,7 @@ function checkValid(userResponse) {
     let regEx = /./;
     for (let i = 0; i < allActivitiesList.length; i++) {
         regEx = RegExp(`take .*${allActivitiesList[i]}`);
-        if (regEx.test(userResponse.toLowercase())) {
+        if (regEx.test(userResponse.toLowerCase())) {
             return take(allActivitiesList[i]);
         }
     }
@@ -255,11 +266,17 @@ function useValid(userResponse) {
     let regEx = /./;
     for (let i = 0; i < player.bag; i++) {
         regEx = RegExp(`take .*${player.bag[i]}`);
-        if (regEx.test(userResponse.toLowercase())) {
+        if (regEx.test(userResponse.toLowerCase())) {
             return take(player.bag[i]);
         }
     }
     return false
+}
+
+function search() {
+    let desc = player.position.description;
+    console.log("\x1b[35m%s\x1b[0m", "\n"+desc);
+    return;
 }
 
 // -------------------------------------------
@@ -320,6 +337,10 @@ while (true) {
     // checks for "bag" functionality
     if (query === "bag") {
         console.log(player.bag)
+        continue
+    }
+    if (query === "search") {
+        search()
         continue
     }
     // checks for "help"
