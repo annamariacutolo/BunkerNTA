@@ -215,11 +215,11 @@ function help() {
 \"help\" brings up this help message.")
 }
 
-function moveCheck(userResponse) {
+function moveValid(userResponse) {
     const allDirections = ['central','north','west','east','south']
     let regEx = /./;
     for (let i = 0; i < allDirections.length; i++) {
-        regEx = RegExp(`move .*${allDirections[i]}`);
+        regEx = RegExp(`(move)|(go) .*${allDirections[i]}`);
         if (regEx.test(userResponse.toLowercase())) {
             return move(allDirections[i])
         }
@@ -227,7 +227,7 @@ function moveCheck(userResponse) {
     return false
 }
 
-function takeCheck(userResponse) {
+function takeValid(userResponse) {
     const allItemsList = allItems.keys();
     let regEx = /./;
     for (let i = 0; i < allItemsList.length; i++) {
@@ -239,7 +239,7 @@ function takeCheck(userResponse) {
     return false
 }
 
-function checkCheck(userResponse) {
+function checkValid(userResponse) {
     const allActivitiesList = allActivities.keys();
     let regEx = /./;
     for (let i = 0; i < allActivitiesList.length; i++) {
@@ -251,7 +251,7 @@ function checkCheck(userResponse) {
     return false
 }
 
-function useCheck(userResponse) {
+function useValid(userResponse) {
     let regEx = /./;
     for (let i = 0; i < player.bag; i++) {
         regEx = RegExp(`take .*${player.bag[i]}`);
@@ -310,31 +310,13 @@ while (true) {
         continue
     };
     // checks for "move" functionality
-    if (query.startsWith("move")) {
-        const moveSuccess = move(query.split(" ")[1])
-        // this takes the second word of the passed query starting with "move"
-        if (moveSuccess === false) {
-            continue
-        };
-        console.log("\x1b[33m%s\x1b[0m", "You have moved to the "+player.position.name+" room.")    
-        continue  
-    };
+    if (!moveValid(query)) {continue};
     // checks for "take" functionality
-    if (query.startsWith("take")) {
-        const takeSuccess = take(query.split(" ")[1])
-        // selects what you want to take
-        continue 
-    }
+    if (!takeValid(query)) {continue};
     // checks for "use" functionality
-    if (query.startsWith("use")) {
-        const useSuccess = use(query.split(" ")[1])
-        continue
-    }
+    if (!useValid(query)) {continue};
     // checks for "check" functionality
-    if (query.startsWith("check")) {
-        const checkSuccess = check(query.split(" ")[1])
-        continue
-    }
+    if (!checkValid(query)) {continue};
     // checks for "bag" functionality
     if (query === "bag") {
         console.log(player.bag)
