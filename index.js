@@ -154,7 +154,7 @@ function take(item) {
     // if (allActivities[item]) {
     //     console.log("That item is too big to fit in your pockets!")
     //     return false
-    }
+    // }
     player.bag.push(item)
     removeArrayByValue(player.position.items, item)
     console.log("You have moved the "+allItems[item].name+" to your bag.")
@@ -205,6 +205,12 @@ const playerName = await askQuestion("What is your name? ")
 player.setName(playerName)
 
 console.log("Hello "+player.name)
+
+console.log("\n"+"\"move\" allows you to move between rooms, \n\
+\"take\" allows you to take objects from the room, \n\
+\"bag\" allows you to check the contents of your bag, \n\
+\"use\" allows you to use items in your possesion, \n\
+\"check\" allows you to examine immovable objects in the room.")
 
 // GAME LOOP
 
