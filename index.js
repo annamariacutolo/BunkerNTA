@@ -327,13 +327,13 @@ while (true) {
         continue
     };
     // checks for "move" functionality
-    if (!moveValid(query)) {continue};
+    moveValid(query);
     // checks for "take" functionality
-    if (!takeValid(query)) {continue};
+    takeValid(query);
     // checks for "use" functionality
-    if (!useValid(query)) {continue};
+    useValid(query);
     // checks for "check" functionality
-    if (!checkValid(query)) {continue};
+    checkValid(query);
     // checks for "bag" functionality
     if (query === "bag") {
         console.log(player.bag)
@@ -350,4 +350,6 @@ while (true) {
     }
     // checks for "exit"
     if (query === "exit") {break}
+    
+    continue // continues if input is not valid
 }
