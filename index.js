@@ -33,6 +33,7 @@ class Activity {
     }
 }
 
+// -------------------------------------------
 
 let roomSouth = new Room("South", 
 "This is flavour text for S room", 
@@ -43,7 +44,7 @@ false
 let roomCentral = new Room("Central",
 "This is flavour text for C room",
 ["wardrobe", "desk", "door", "bed"],
-false
+true
 )
 
 let roomNorth = new Room("North",
@@ -107,7 +108,7 @@ const allActivities = {
 roomSouth.setActivities(["wardrobe"]);
 roomWest.setActivities(["picture"]);
 
-// -------------------------------------------
+// ------------------------------------------- need player after room definitions
 
 class Player {
     constructor() {
@@ -121,6 +122,8 @@ class Player {
 }
 
 const player = new Player()
+
+// -------------------------------------------
 
 function askQuestion(query) {
     const readLine = readline.createInterface({
@@ -204,10 +207,11 @@ function help() {
 \"bag\" allows you to check the contents of your bag, \n\
 \"use\" allows you to use items in your possesion, \n\
 \"check\" allows you to examine immovable objects in the room, \n\
+\"exit\" exits the game, \n\
 \"help\" brings up this help message.")
 }
 
-// ------------------------------------------- this is a text comment for git
+// -------------------------------------------
 
 // INITIALISATION
 
@@ -215,7 +219,7 @@ function help() {
 const playerName = await askQuestion("What is your name? ")
 player.setName(playerName)
 
-console.log("Hello "+player.name)
+console.log("\n"+"Hello "+player.name)
 
 // displays the help message
 help()
@@ -224,9 +228,10 @@ help()
 
 while (true) {
     console.log("\n");
-    console.log("You are in the "+player.position.name+" room");
+    console.log("\x1b[35m%s\x1b[0m", "You are in the "+player.position.name+" room");
     console.log(player.position.flavText);
     // need both conditions below bc empty array returns true and items may not exist
+    // this returns the items currently in the room just entered
     const ifItems = player.position.items && player.position.items.length
     if (ifItems) {
         let itemNames = [];
@@ -235,6 +240,7 @@ while (true) {
         }
         console.log("There is "+itemNames.join("; ")+" in this room you could pick up.");
     }
+    // this returns the activities (interactable objects that can't be taken) currently in the room just entered
     const ifActivity = player.position.activity && player.position.activity.length
     if (ifActivity) {
         let activityNames = [];
@@ -243,11 +249,14 @@ while (true) {
         }
         console.log("There is "+activityNames.join("; ")+" which you can check");
     }
+    // this tells us the room is empty if there aren't any items or activities
     if (!ifItems && !ifActivity) {console.log("This room is empty.")}
     const query = await askQuestion("What would you like to do? ");
+    // restarts the game loop if no query is input
     if (!query) {
         continue
     };
+    // checks for "move" functionality
     if (query.startsWith("move")) {
         const moveSuccess = move(query.split(" ")[1])
         // this takes the second word of the passed query starting with "move"
@@ -257,25 +266,32 @@ while (true) {
         console.log("\x1b[33m%s\x1b[0m", "You have moved to the "+player.position.name+" room.")    
         continue  
     };
+    // checks for "take" functionality
     if (query.startsWith("take")) {
         const takeSuccess = take(query.split(" ")[1])
         // selects what you want to take
         continue 
     }
+    // checks for "use" functionality
     if (query.startsWith("use")) {
         const useSuccess = use(query.split(" ")[1])
         continue
     }
+    // checks for "check" functionality
     if (query.startsWith("check")) {
         const checkSuccess = check(query.split(" ")[1])
         continue
     }
+    // checks for "bag" functionality
     if (query === "bag") {
         console.log(player.bag)
         continue
     }
+    // checks for "help"
     if (query === "help") {
         help()
         continue
     }
+    // checks for "exit"
+    if (query === "exit") {break}
 }
