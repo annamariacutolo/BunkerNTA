@@ -28,3 +28,5 @@ const rejectCode = `>> ERROR: INVALID CODE - ATTEMPTS REMAINING: ${attemptsLeft}
 const acceptCode = `>> CODE ACCEPTED - DOOR OPENING
 The door begins to slowly swing open, bringing with it traces of an outside breeze.
 Freedom at last.`;
+
+//need pipes booby trap with a sign somewhere in the room saying that the pipes are hot

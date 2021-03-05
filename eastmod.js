@@ -14,5 +14,7 @@ Without a way to get some leverage, the switch won't budge.`
 const useWrenchText = `Use the wrench? [y/n]`
 const powerOnText = `You use the wrench to turn the power back on.
 There is a flash as you heave the switch into position.`
+
+// if not wearing hazmat (or gloves?)
 const noProtectionText = `The current shocks you. You cry out in pain as you drop the wrench.
 Your health is now ${player.hp}.`
