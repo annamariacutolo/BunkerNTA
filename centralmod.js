@@ -1,5 +1,6 @@
-const flavourText = `You enter the central atrium. The soft light from the emergency lights provides barely adequate visibility.
-There's a stairwell in the centre looks like you could use it to get to the surface above.
+const flavourText = `You enter the central room. 
+The soft light from the lamps above provides poor but adequate visibility.
+There's a stairwell in the centre that looks like you could use it to get to the surface above.
 You see that there are four doors leading to rooms labelled north to south that you could go to.
 Your living quarters appear to have been in the south room.
 You may take any of the following actions:
@@ -11,3 +12,15 @@ You may take any of the following actions:
     6) Check the room`
 
 let roomCentral = new Room("Central", flavourText)
+
+const stairwellText = `You climb the stairwell.
+At the top there is a door that looks like an exit.
+A keypad is next to the door that seems to be required to unlock it.
+If only you knew the code...`
+
+const keypadText = `The power is off - you need to restore it somehow`
+const keypadTextPower = `>> AWAITING INPUT - ATTEMPTS REMAINING: ${attemptsLeft}`
+const rejectCode = `>> ERROR: INVALID CODE - ATTEMPTS REMAINING: ${attemptsLeft}`
+const acceptCode = `>> CODE ACCEPTED - DOOR OPENING
+The door begins to slowly swing open, bringing with it traces of an outside breeze.
+Freedom at last.`
