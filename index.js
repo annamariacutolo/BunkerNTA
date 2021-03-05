@@ -35,33 +35,30 @@ class Activity {
 
 // -------------------------------------------
 
+// creates a room: gives it a name, a description which is shown on entry and defintion for "locked"
+
 let roomSouth = new Room("South", 
-"This is flavour text for S room", 
-["wardrobe", "desk", "door", "bed"],
+"This room loosely resembles a bedroom", 
 false
 )
 
 let roomCentral = new Room("Central",
 "This is flavour text for C room",
-["wardrobe", "desk", "door", "bed"],
 true
 )
 
 let roomNorth = new Room("North",
 "This is flavour text for N room",
-["wardrobe", "desk", "door", "bed"],
 true
 )
 
 let roomEast = new Room("East",
 "This is flavour text for E room",
-["wardrobe", "desk", "door", "bed"],
 false
 )
 
 let roomWest = new Room("West",
 "This is flavour text for W room",
-["wardrobe", "desk", "door", "bed"],
 false
 )
 
@@ -88,13 +85,19 @@ roomWest.setAdjoined({
 
 //                          args    function of the item
 let book = new Item("book", () => {console.log("This is the book contents.")})
+let oil_can = new Item("oil_can", () => {
+    console.log("You use the oil can on the siezed door mechanism. The door swings open")
+    roomCentral.locked = false
+})
 
 // need const obj "allItems" to pickup easier
 const allItems = {
-    "book" : book
+    "book" : book,
+    "oil_can" : oil_can
 }
 
 roomWest.setContents(["book"]);
+roomSouth.setContents(["oil_can"])
 
 // -------------------------------------------
 
@@ -103,6 +106,7 @@ let picture = new Activity("picture", () => {})
 
 const allActivities = {
     "wardrobe" : wardrobe,
+    "picture" : picture,
 }
 
 roomSouth.setActivities(["wardrobe"]);
@@ -139,12 +143,12 @@ function askQuestion(query) {
 function move(movement) {
     const newRoom = player.position.adjoined[movement]
     if (!newRoom) { 
-        console.log("That is an invalid direction.")
+        console.log("\x1b[31m%s\x1b[0m", "That is an invalid direction.")
         return false 
         }
     //below don't need the "=== true"
     if (newRoom.locked === true) { 
-        console.log("The door is locked.")
+        console.log("\x1b[31m%s\x1b[0m", "The door is locked.")
         return false 
         }
     player.position = newRoom
@@ -152,14 +156,14 @@ function move(movement) {
     }
 
 function take(item) {
+    if (allActivities[item]) {
+        console.log("\x1b[31m%s\x1b[0m", "That item is too big to fit in your pockets!")
+        return false
+    }
     if (!player.position.items.includes(item)) {
-        console.log("That item is not in this room.")
+        console.log("\x1b[31m%s\x1b[0m", "That item is not in this room.")
         return false 
         }
-    // if (allActivities[item]) {
-    //     console.log("That item is too big to fit in your pockets!")
-    //     return false
-    // }
     player.bag.push(item)
     removeArrayByValue(player.position.items, item)
     console.log("\x1b[33m%s\x1b[0m", "You have moved the "+allItems[item].name+" to your bag.")
@@ -183,7 +187,7 @@ function removeArrayByValue(array, value) {
 
 function use(item) {
     if (!player.bag.includes(item)) {
-        console.log("That item is not in your bag.")
+        console.log("\x1b[31m%s\x1b[0m", "That item is not in your bag.")
         return false 
         }
     allItems[item].action();
@@ -195,7 +199,7 @@ function use(item) {
 
 function check(activity) {
     if (!player.position.activity.includes(activity)) {
-        console.log("That is an invalid command.")
+        console.log("\x1b[31m%s\x1b[0m", "That is an invalid command.")
         return false
     }
     allActivities[activity].action();
@@ -219,15 +223,17 @@ function help() {
 const playerName = await askQuestion("What is your name? ")
 player.setName(playerName)
 
-console.log("\n"+"Hello "+player.name)
-
 // displays the help message
 help()
+
+console.log("\n"+"Hello "+player.name)
+
+console.log("You awake in a room you do not recognise. You try to open the door but find it is siezed shut.")
 
 // GAME LOOP
 
 while (true) {
-    console.log("\n");
+    console.log("");
     console.log("\x1b[35m%s\x1b[0m", "You are in the "+player.position.name+" room");
     console.log(player.position.flavText);
     // need both conditions below bc empty array returns true and items may not exist
@@ -238,7 +244,7 @@ while (true) {
         for (const item of player.position.items) {
             itemNames.push("a "+allItems[item].name);    
         }
-        console.log("There is "+itemNames.join("; ")+" in this room you could pick up.");
+        console.log("There is "+itemNames.join("; ")+" in this room you could pick up");
     }
     // this returns the activities (interactable objects that can't be taken) currently in the room just entered
     const ifActivity = player.position.activity && player.position.activity.length
