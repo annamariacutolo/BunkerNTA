@@ -3,10 +3,10 @@
 import readline from 'readline';
 
 class Room {
-    constructor(name, flavText, interactable, locked) {
+    constructor(name, flavText, activity, locked) {
         this.name = name;
         this.flavText = flavText;
-        this.interactable = interactable;
+        this.activity = activity;
         this.locked = locked;
     }
     setAdjoined(adjoined) {
@@ -74,6 +74,8 @@ roomWest.setAdjoined({
     "east" : roomCentral
 })
 
+// -------------------------------------------
+
 //                          args    function of the item
 let book = new Item("book", () => {console.log("This is the book contents.")})
 
@@ -83,6 +85,8 @@ const allItems = {
 }
 
 roomEast.setContents(["book"])
+
+// -------------------------------------------
 
 class Player {
     constructor() {
@@ -149,11 +153,25 @@ function removeArrayByValue(array, value) {
 //      if item in bag
 //      run item action (allItems[item].action())
 
+function use(item) {
+    if (!player.bag.includes(item)) {
+        console.log("That item is not in your bag.")
+        return false 
+        }
+    allItems[item].action();
+}
+
+// -------------------------------------------
+
+// INITIALISATION
+
 // this is the form of the questions we need to ask. It waits for input
 const playerName = await askQuestion("What is your name? ")
 player.setName(playerName)
 
 console.log("Hello "+player.name)
+
+// GAME LOOP
 
 while (true) {
     console.log("\n");
@@ -185,6 +203,10 @@ while (true) {
         const takeSuccess = take(query.split(" ")[1])
         // selects what you want to take
         continue 
+    }
+    if (query.startsWith("use")) {
+        const useSuccess = use(query.split(" ")[1])
+        continue
     }
     if (query === "bag") {
         console.log(player.bag)
