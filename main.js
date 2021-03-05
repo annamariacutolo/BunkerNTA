@@ -63,7 +63,7 @@ while (player.health > 0) {
     while (player.currentRoom = 'central') {
         // when player leaves, break and goto chosen room
         console.log(
-        `You enter the central atrium. The soft light from the emergency lights provides barely adequate visibility.
+`You enter the central atrium. The soft light from the emergency lights provides barely adequate visibility.
 There's a stairwell in the centre looks like it leads up to the surface above.
 You see that there are four doors leading to rooms labelled north to south.
 Your living quarters appear to have been in the south room.`)
@@ -73,8 +73,7 @@ Your living quarters appear to have been in the south room.`)
     3) Go to the east room
     4) Go to the south room
     5) Go up the stairwell
-    6) Examine the room
-        `);
+    6) Examine the room`);
         switch (req[0]) {
             case 1: {
                 player.currentRoom = 'west';
