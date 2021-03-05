@@ -239,7 +239,7 @@ function moveValid(userResponse) {
 }
 
 function takeValid(userResponse) {
-    const allItemsList = allItems.keys();
+    const allItemsList = Object.keys(allItems);
     let regEx = /./;
     for (let i = 0; i < allItemsList.length; i++) {
         regEx = RegExp(`take .*${allItemsList[i]}`);
@@ -251,7 +251,7 @@ function takeValid(userResponse) {
 }
 
 function checkValid(userResponse) {
-    const allActivitiesList = allActivities.keys();
+    const allActivitiesList = Object.keys(allActivities);
     let regEx = /./;
     for (let i = 0; i < allActivitiesList.length; i++) {
         regEx = RegExp(`take .*${allActivitiesList[i]}`);
