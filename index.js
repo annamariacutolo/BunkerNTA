@@ -3,10 +3,9 @@
 import readline from 'readline';
 
 class Room {
-    constructor(name, flavText, activity, locked) {
+    constructor(name, flavText, locked) {
         this.name = name;
         this.flavText = flavText;
-        this.activity = activity;
         this.locked = locked;
     }
     setAdjoined(adjoined) {
@@ -15,9 +14,19 @@ class Room {
     setContents(items) {
         this.items = items;
     }
+    setActivities(activity) {
+        this.activity = activity;
+    }
 }
 
 class Item {
+    constructor(name, action) {
+        this.name = name;
+        this.action = action;
+    }
+}
+
+class Activity {
     constructor(name, action) {
         this.name = name;
         this.action = action;
@@ -84,7 +93,17 @@ const allItems = {
     "book" : book
 }
 
-roomEast.setContents(["book"])
+roomEast.setContents(["book"]);
+
+// -------------------------------------------
+
+let wardrobe = new Activity("wardrobe", () => {console.log("Yes, it is a wardrobe")})
+
+const allActivities = {
+    "wardrobe" : wardrobe,
+}
+
+roomSouth.setActivities(["wardrobe"]);
 
 // -------------------------------------------
 
@@ -132,6 +151,10 @@ function take(item) {
         console.log("That item is not in this room.")
         return false 
         }
+    // if (allActivities[item]) {
+    //     console.log("That item is too big to fit in your pockets!")
+    //     return false
+    }
     player.bag.push(item)
     removeArrayByValue(player.position.items, item)
     console.log("You have moved the "+allItems[item].name+" to your bag.")
@@ -149,7 +172,7 @@ function removeArrayByValue(array, value) {
 }
 
 
-// function to use item
+// function to use Item
 //      if item in bag
 //      run item action (allItems[item].action())
 
@@ -159,6 +182,18 @@ function use(item) {
         return false 
         }
     allItems[item].action();
+}
+
+// function to check Activity
+//      if activity in current room
+//      run activity action (allActivities[activity].action())
+
+function check(activity) {
+    if (!player.position.activity.includes(activity)) {
+        console.log("That is an invalid command.")
+        return false
+    }
+    allActivities[activity].action();
 }
 
 // ------------------------------------------- this is a text comment for git
@@ -206,6 +241,10 @@ while (true) {
     }
     if (query.startsWith("use")) {
         const useSuccess = use(query.split(" ")[1])
+        continue
+    }
+    if (query.startsWith("check")) {
+        const checkSuccess = check(query.split(" ")[1])
         continue
     }
     if (query === "bag") {
