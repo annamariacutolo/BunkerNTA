@@ -215,6 +215,53 @@ function help() {
 \"help\" brings up this help message.")
 }
 
+function moveCheck(userResponse) {
+    const allDirections = ['central','north','west','east','south']
+    let regEx = /./;
+    for (let i = 0; i < allDirections.length; i++) {
+        regEx = RegExp(`move .*${allDirections[i]}`);
+        if (regEx.test(userResponse.toLowercase())) {
+            return move(allDirections[i])
+        }
+    }
+    return false
+}
+
+function takeCheck(userResponse) {
+    const allItemsList = allItems.keys();
+    let regEx = /./;
+    for (let i = 0; i < allItemsList.length; i++) {
+        regEx = RegExp(`take .*${allItemsList[i]}`);
+        if (regEx.test(userResponse.toLowercase())) {
+            return take(allItemsList[i]);
+        }
+    }
+    return false
+}
+
+function checkCheck(userResponse) {
+    const allActivitiesList = allActivities.keys();
+    let regEx = /./;
+    for (let i = 0; i < allActivitiesList.length; i++) {
+        regEx = RegExp(`take .*${allActivitiesList[i]}`);
+        if (regEx.test(userResponse.toLowercase())) {
+            return take(allActivitiesList[i]);
+        }
+    }
+    return false
+}
+
+function useCheck(userResponse) {
+    let regEx = /./;
+    for (let i = 0; i < player.bag; i++) {
+        regEx = RegExp(`take .*${player.bag[i]}`);
+        if (regEx.test(userResponse.toLowercase())) {
+            return take(player.bag[i]);
+        }
+    }
+    return false
+}
+
 // -------------------------------------------
 
 // INITIALISATION
