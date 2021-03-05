@@ -161,7 +161,7 @@ function use(item) {
     allItems[item].action();
 }
 
-// -------------------------------------------
+// ------------------------------------------- this is a text comment for git
 
 // INITIALISATION
 
