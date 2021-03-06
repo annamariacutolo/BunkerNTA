@@ -1,6 +1,8 @@
 " use strict"
 
 import readline from 'readline';
+import promptSync from 'prompt-sync';
+const prompt = promptSync({sigint : true});
 
 class Room {
     constructor(name, flavText, locked, description) {
@@ -18,6 +20,9 @@ class Room {
     setActivities(activity) {
         this.activity = activity;
     }
+    addContents(storedItems) {
+        this.items = [...this.items, ...storedItems];
+    }
 }
 
 class Item {
@@ -27,11 +32,36 @@ class Item {
     }
 }
 
+
+// storedItems=[] means if no 3rd arg, default set as []
 class Activity {
-    constructor(name, action) {
+    constructor(name, action, storedItems=[]) {
         this.name = name;
         this.action = action;
+        this.storedItems = storedItems;
+        this.hasTriggered = false;
     }
+    runAction() {
+        this.action(this);
+        if (this.storedItems.length) {this.moveContents()}
+    }
+    moveContents() {
+        console.log("You find "+this.storedItems.join("; "));
+        player.position.addContents(this.storedItems);
+        this.storedItems = [];
+    }
+}
+
+function askQuestion(query) {
+    return prompt(query);
+    // const readLine = readline.createInterface({
+    //     input: process.stdin,
+    //     output: process.stdout
+    // });
+    // return new Promise(resolve => readLine.question(query, ans => {
+    //     readLine.close();
+    //     resolve(ans);
+    // }))
 }
 
 // -------------------------------------------
@@ -48,6 +78,7 @@ let roomCentral = new Room("Central",
 "You enter a large, empty room. There are doors in each direction",
 true,
 `The soft light from the lamps above provides poor but adequate visibility.
+A bucket sits collecting murky water from leaking pipe. 
 There's a stairwell in the centre that looks like you could use it to get to the surface above.
 You see that there are four doors leading to rooms labelled north to south that you could go to.
 Your living quarters appear to have been in the south room.`
@@ -60,7 +91,7 @@ true,
 )
 
 let roomEast = new Room("East",
-"This room has pieces of machinery adoring its walls",
+"This room has pieces of machinery adorning its walls",
 false,
 `This appears to be some sort of maintenance room.
 Various equipment seems to be purifying the water and air in bunker.
@@ -100,7 +131,10 @@ class Player {
     constructor() {
         this.bag = [];
         this.hp = 3;
-        this.position = roomSouth
+        this.position = roomSouth;
+        this.glove = false;
+        this.hazmat = false;
+        this.power = false;
     }
     setName(name) {
         this.name = name
@@ -109,75 +143,242 @@ class Player {
 
 const player = new Player()
 
-// -------------------------------------------
+// ITEMS -------------------------------------------
 
-//                          args    function of the item
-let book = new Item("book", () => {console.log("This is the book contents.")})
+//                              args    function of the item
+// let book = new Item("book", () => {console.log("This is the book contents.")})
 let oil_can = new Item("oil_can", () => {
     console.log("You use the oil can on the siezed door mechanism. The door swings open")
     roomCentral.locked = false
 })
-let wrench = new Item("wrench", () => {
-    if (player.position === roomEast) {
-        console.log(`You use the wrench to turn the power back on.
-        There is a flash as you heave the switch into position.`)
-        if (!player.bag.includes("hazmat_suit")) {
-            player.hp--
-            console.log(`The current shocks you. You cry out in pain as you drop the wrench.
-Your health is now ${player.hp}.`)
+let plastic_fish = new Item("plastic_fish", () => {console.log("An exquisitely crafted plastic fish. It is red in colouration and appears to be a herring.")})
+let wrench = new Item("wrench", () => {console.log("Heavy duty!")});
+let glove = new Item("glove", () => {
+    console.log("A single heavy-duty insulating glove.");
+    const glove = askQuestion("Would you like to put it on? y/n ");
+    if (glove === "y") {player.glove = true};
+    });
+let pen = new Item("pen", () => {console.log("This appears to be an ordinary pen")});
+let paper = new Item("paper", () => console.log(`There is a sentence written on the paper with words missing:
+\"The ___ is in the ____ of the _____.\"`));
+let book_1 = new Item("book_1", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"painting\""," is highlighted")});
+let book_2 = new Item("book_2", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"drawer\""," is highlighted")});
+let book_3 = new Item("book_3", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"book\""," is highlighted")});
+let book_4 = new Item("book_4", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"paper\""," is highlighted")});
+let book_5 = new Item("book_5", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"key\""," is highlighted")});
+let book_6 = new Item("book_6", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"note\""," is highlighted")});
+let book_7 = new Item("book_7", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"desk\""," is highlighted")});
+let book_8 = new Item("book_8", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"base\""," is highlighted")});
+let book_9 = new Item("book_9", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"clock\""," is highlighted")});
+let book_10 = new Item("book_10", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"pen\""," is highlighted")});
+let book_11 = new Item("book_11", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"knife\""," is highlighted")});
+let book_12 = new Item("book_12", () => {console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ","\"chair\""," is highlighted")});
+let knife = new Item("knife", () => {console.log("Fairly blunt but sharp enough to damage furniture")})
+let key = new Item("key", () => {console.log("I wonder where this is from?")});
+let bucket = new Item("bucket", () => {console.log("I probably should have left this where it was...")});
+let screwdriver = new Item("screwdriver", () => {console.log("A standard flat-headed screwdriver")});
+let hazmat_suit = new Item("hazmat_suit", () => {console.log("The hazmat suit you found in the vent");
+    const hazmatWear = askQuestion("Would you like to put it on? y/n ");
+    if (hazmatWear === "y") {player.hazmat = true};
+    });
+
+
+// need const obj "allItems" to pickup easier
+const allItems = {
+    "oil_can" : oil_can,
+    "plastic_fish" : plastic_fish,
+    "wrench" : wrench,
+    "glove" : glove,
+    "pen" : pen,
+    "paper" : paper,
+    "book_1" : book_1, 
+    "book_2" : book_2, 
+    "book_3" : book_3, 
+    "book_4" : book_4, 
+    "book_5" : book_5, 
+    "book_6" : book_6, 
+    "book_7" : book_7, 
+    "book_8" : book_8, 
+    "book_9" : book_9, 
+    "book_10" : book_10, 
+    "book_11" : book_11, 
+    "book_12" : book_12,
+    "knife" : knife,
+    "key" : key,
+    "bucket" : bucket,
+    "screwdriver" : screwdriver,
+    "hazmat_suit" : hazmat_suit,
+}
+
+roomSouth.setContents(["oil_can", "plastic_fish"]);
+
+roomWest.setContents([]);
+
+roomNorth.setContents(["wrench", "glove"]);
+
+roomCentral.setContents(["bucket"]);
+
+roomEast.setContents([]);
+
+
+// ACTIVITIES -------------------------------------------
+
+let wardrobe = new Activity("wardrobe", () => {console.log("A basic wooden wardrobe. You search it but find nothing of note.")})
+let painting = new Activity("painting", () => {
+    console.log("The painting depicts a coastal landscape with the sun setting on the horizon.") 
+    if (!player.bag.includes("knife")) {
+        console.log("You notice the frame sits apart from the wall")
+        const takePainting = askQuestion("Would you like to remove the painting from the wall? y/n ");
+            if (takePainting === "y") {
+            console.log("Taking the painting off the wall, you notice an object taped to the back. It appears to be a knife.");
+            const takeKnife = askQuestion("Would you like to take the knife? y/n ");
+            if (takeKnife === "y") {
+                console.log("\x1b[33m%s\x1b[0m", "You replace the painting and move the knife to your bag.");
+                player.bag.push("knife")};
+    }}});
+let desk = new Activity("desk", (current) => {
+        if (!current.storedItems.length) {console.log("\x1b[33m%s\x1b[0m", "There is nothing here")}
+    }, ["pen", "paper"]);
+let bookcase = new Activity("bookcase", (current) => {
+        if (!current.storedItems.length) {console.log("\x1b[33m%s\x1b[0m", "There is nothing here")}
+    }, ["book_1", "book_2", "book_3", "book_4", "book_5", "book_6", "book_7", "book_8", "book_9", "book_10", "book_11", "book_12"]);
+let clock = new Activity("clock", () => {console.log("\x1b[33m%s\x1b[0m", "The clock has stopped. You have no concept of time in the bunker. It is always 8:00:25 down here")});
+let chair = new Activity("chair", () => {
+    console.log("The chair is wooden with a red leather seat");
+    if (player.bag.includes("knife")) {
+        const attackChair = askQuestion("Would you like to attack the chair with the knife? y/n ");
+        if (attackChair === "y") {
+            console.log("\x1b[33m%s\x1b[0m", "You use the knife to cut open the leather seating. Amongst the stuffing you find a silver key which you pocket");
+            player.bag.push("key");
+        }
+    }
+});
+let locked_door = new Activity("locked_door", () => {
+    console.log("A heavy, metal door which appears to be locked");
+    if (player.bag.includes("key")) {
+        const openDoor = askQuestion("Would you like to try the silver key in the door? y/n ");
+        if (openDoor === "y") {
+            console.log("\x1b[33m%s\x1b[0m", "The key fits! The door swings open")
+            roomNorth.locked = false;
+        }
+    }
+});
+let toolbox = new Activity("toolbox", () => {
+    console.log("A heavy, metal toolbox filled to the brim with only screwdrivers");
+    if (!player.bag.includes("screwdriver")) {
+        const takeScrewdriver = askQuestion("Would you like to take one? y/n ")
+        if (takeScrewdriver === "y") {
+            player.bag.push("screwdriver")
+        }
+    }
+});
+let purification_station = new Activity("purification_station", () => {console.log("This machine seems to be cleaning the air in the bunker")});
+let heavy_box = new Activity("heavy_box", (current) => {
+    if (!current.hasTriggered) {
+        current.hasTriggered = true;
+        console.log("\x1b[33m%s\x1b[0m", "You reach for the box but your hand slips. It lands heavy on your shoulder on the way down.")
+        player.hp--
+        console.log("\x1b[31m%s\x1b[0m", `Your health is now ${player.hp}`)
+    }
+    else {
+        console.log("The box lies sadly on its side where it fell")
+    }
+})
+const placedBucket = false
+let vent = new Activity("vent", (current) => {
+    console.log("A vent sits high up on the wall")
+    if (!current.hasTriggered) {
+        const hasBucket = player.bag.includes("bucket")
+        if (!hasBucket && !placedBucket) {
+            console.log("The vent is too high-up to reach")
+        }
+        if (hasBucket && !placedBucket) {
+            const QPlaceBucket = askQuestion("Would you like to place the bucket to get a better look at the vent? y/n ")
+            if (QPlaceBucket === "y") {
+                placedBucket = true
+            }
+        }
+        else if (hasBucket || placedBucket) {
+            if (!player.bag.includes("screwdriver")) {
+                console.log(`Standing on the bucket you can see something bright yellow within the vent. The grating is held on by four screws. Perhaps there is a screwdriver around here somwhere?`)
+            }
+            else if (player.bag.includes("screwdriver")) {
+                const ventScrews = askQuestion(`Standing on the bucket you can see something bright yellow within the vent. Would you like to use the screwdriver to remove the grating? y/n `)
+                if (ventScrews === "y") {
+                    console.log("You use the screwdriver to remove the vent grating and find a hazmat suit within. I wonder who put this here?")
+                    console.log("\x1b[33m%s\x1b[0m", "You take the hazmat suit")
+                    player.bag.push("hazmat_suit")
+                }
+            }
+        }
+    }
+})
+let shelving = new Activity("shelving", () => {console.log("Shelving packed to the brim with assorted broken machinery and provisions")});
+let power_console = new Activity("power_console", () => {
+    console.log(`The dials indicate that the main power is off. 
+There is the remains of a large rubber-coated lever next to the dials.
+This appears to be the master circuit breaker but the missing handle is a problem.
+Without a way to get some leverage, the switch won't budge.
+You might be able to use a large tool on this`)
+    if (player.bag.includes("wrench")) {
+        const wrenchPower = askQuestion("Would you like to try using the wrench as a lever? y/n ")
+        if (wrenchPower === "y") {
+            console.log("You use the wrench to turn the power back on. There is a flash as you heave the switch into position")
+            if (!player.glove) {
+                player.hp--
+                console.log("\x1b[31m%s\x1b[0m", `The current shocks you! You cry out as you drop the wrench. \nYour health is now ${player.hp}.`)
+            }
+            player.power = true;
+        }
+    }
+})
+let stairwell = new Activity("stairwell", () => {
+    console.log("A thick door sits between you and the outside world")
+    if (!player.power) {
+        console.log("The door won't budge. It seems the motors aren't being provided power")
+    }
+    if (player.power) {
+        console.log("A green LED shines brightly by the door handle.")
+        const openMainDoor = askQuestion("Would you like to open the door? y/n ")
+        if (openMainDoor === "y") {
+            console.log("You open the door. The bright light comes streaming in, blinding you momentality")
+            if (!player.hazmat) {
+                console.log(`Unfortunately for you, the outside world is horrendously irrated and you die in seconds. 
+                GAME OVER - YOU LOSE`)
+                gameRunning = false
+                return
+            }
+            console.log(`The world appears hazy through your breathe which fogs up the hazmat screen, but you're thankful for the protection.
+            Who knows the state of the world to which you have waken into.
+            You take your first steps into a world unfamillar to you and wonder what will happen next.
+            GAME OVER - YOU WON`)
         }
     }
 })
 
-// need const obj "allItems" to pickup easier
-const allItems = {
-    "book" : book,
-    "oil_can" : oil_can,
-    "wrench" : wrench
-}
-
-roomWest.setContents(["book"]);
-roomSouth.setContents(["oil_can"])
-
-// -------------------------------------------
-
-let wardrobe = new Activity("wardrobe", () => {console.log("Yes, it is a wardrobe")})
-let picture = new Activity("picture", () => {})
-
-function powerInteract() {
-    console.log(`The dials indicate that the main power is off. 
-There is the remains of a large rubber-coated lever next to the dials.
-This appears to be the master circuit breaker but the missing handle is a problem.
-Without a way to get some leverage, the switch won't budge.`)
-    if (player.bag.includes("wrench")) {
-        console.log('You might be able to use a large tool on this')
-    }
-}
-
-let power_console = new Activity("power_console", powerInteract)
-
 const allActivities = {
     "wardrobe" : wardrobe,
-    "picture" : picture,
-    "power_console" : power_console
-}
+    "painting" : painting,
+    "power_console" : power_console,
+    "desk" : desk,
+    "bookcase" : bookcase,
+    "clock" : clock,
+    "chair" : chair,
+    "locked_door" : locked_door,
+    "heavy_box" : heavy_box,
+    "shelving" : shelving,
+    "purification_station" : purification_station,
+    "stairwell" : stairwell,
+    "toolbox" : toolbox
+    }
 
 roomSouth.setActivities(["wardrobe"]);
-roomWest.setActivities(["picture"]);
-roomEast.setActivities(["power_console"]);
+roomWest.setActivities(["painting", "desk", "bookcase", "clock", "chair",]);
+roomEast.setActivities(["power_console", "toolbox"]);
+roomCentral.setActivities(["locked_door", "stairwell"]);
+roomNorth.setActivities(["heavy_box", "shelving", "vent"])
 
-// -------------------------------------------
-
-function askQuestion(query) {
-    const readLine = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-    return new Promise(resolve => readLine.question(query, ans => {
-        readLine.close();
-        resolve(ans);
-    }))
-}
+// FUNCTIONS -------------------------------------------
 
 function move(movement) {
     const newRoom = player.position.adjoined[movement];
@@ -241,7 +442,7 @@ function check(activity) {
         console.log("\x1b[31m%s\x1b[0m", "That is an invalid command.")
         return false
     }
-    allActivities[activity].action();
+    allActivities[activity].runAction();
 }
 
 function help() {
@@ -323,67 +524,72 @@ console.log("\n"+"Hello "+player.name)
 console.log("You awake in a room you do not recognise. You try to open the door but find it is siezed shut.")
 
 // GAME LOOP
+let gameRunning = true
 
-while (true) {
-    console.log("");
-    console.log("\x1b[35m%s\x1b[0m", "You are in the "+player.position.name+" room");
-    console.log(player.position.flavText);
-    // need both conditions below bc empty array returns true and items may not exist
-    // this returns the items currently in the room just entered
-    const ifItems = player.position.items && player.position.items.length
-    if (ifItems) {
-        let itemNames = [];
-        for (const item of player.position.items) {
-            itemNames.push("a "+allItems[item].name);    
+while (gameRunning) {
+    if (player.hp > 0) {
+        console.log("");
+        console.log("\x1b[35m%s\x1b[0m", "You are in the "+player.position.name+" room");
+        console.log(player.position.flavText);
+        // need both conditions below bc empty array returns true and items may not exist
+        // this returns the items currently in the room just entered
+        const ifItems = player.position.items && player.position.items.length
+        if (ifItems) {
+            let itemNames = [];
+            for (const item of player.position.items) {
+                itemNames.push("a "+allItems[item].name);    
+            }
+            console.log("There is "+itemNames.join("; ")+" in this room you could pick up");
         }
-        console.log("There is "+itemNames.join("; ")+" in this room you could pick up");
-    }
-    // this returns the activities (interactable objects that can't be taken) currently in the room just entered
-    const ifActivity = player.position.activity && player.position.activity.length
-    if (ifActivity) {
-        let activityNames = [];
-        for (const activity of player.position.activity) {
-            activityNames.push("a "+allActivities[activity].name);
+        // this returns the activities (interactable objects that can't be taken) currently in the room just entered
+        const ifActivity = player.position.activity && player.position.activity.length
+        if (ifActivity) {
+            let activityNames = [];
+            for (const activity of player.position.activity) {
+                activityNames.push("a "+allActivities[activity].name);
+            }
+            console.log("There is "+activityNames.join("; ")+" which you can check");
         }
-        console.log("There is "+activityNames.join("; ")+" which you can check");
-    }
-    // this tells us the room is empty if there aren't any items or activities
-    if (!ifItems && !ifActivity) {console.log("This room is empty.")}
-    const query = await askQuestion("What would you like to do? ");
-    // restarts the game loop if no query is input
-    if (!query) {
-        continue
-    };
-    // checks for "move" functionality
-    moveValid(query);
+        // this tells us the room is empty if there aren't any items or activities
+        if (!ifItems && !ifActivity) {console.log("This room is empty.")}
+        const query = await askQuestion("What would you like to do? ");
+        // restarts the game loop if no query is input
+        if (!query) {
+            continue
+        };
+        // checks for "move" functionality
+        moveValid(query);
 
-    // checks for "take" functionality
-    takeValid(query);
+        // checks for "take" functionality
+        takeValid(query);
 
-    // checks for "use" functionality
-    useValid(query);
+        // checks for "use" functionality
+        useValid(query);
 
-    // checks for "check" functionality
-    checkValid(query);
+        // checks for "check" functionality
+        checkValid(query);
 
-    // checks for "bag" functionality
-    if (query === "bag") {
-        if (player.bag === []) {
-            console.log("Your bag is empty")
-        } else {
-            console.log("You have: "+player.bag)
+        // checks for "bag" functionality
+        if (query === "bag") {
+            if (player.bag === []) {
+                console.log("Your bag is empty")
+            } else {
+                console.log("You have: "+player.bag)
+            }
+            continue
         }
-        continue
+        if (query === "search") {
+            search()
+            continue
+        }
+        // checks for "help"
+        if (query === "help") {
+            help()
+            continue
+        }
+        // checks for "exit"
+        if (query === "exit") {break}
     }
-    if (query === "search") {
-        search()
-        continue
-    }
-    // checks for "help"
-    if (query === "help") {
-        help()
-        continue
-    }
-    // checks for "exit"
-    if (query === "exit") {break}
+    else {console.log("You have died")};
+    gameRunning = false;
 }
