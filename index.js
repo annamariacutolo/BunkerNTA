@@ -62,7 +62,9 @@ true,
 let roomEast = new Room("East",
 "This room has pieces of machinery adoring its walls",
 false,
-``
+`This appears to be some sort of maintenance room.
+Various equipment seems to be purifying the water and air in bunker.
+There is also a console that controls the power supply.`
 )
 
 let roomWest = new Room("West",
@@ -92,6 +94,21 @@ roomWest.setAdjoined({
     "east" : roomCentral
 })
 
+// ------------------------------------------- need player after room definitions
+
+class Player {
+    constructor() {
+        this.bag = [];
+        this.hp = 3;
+        this.position = roomSouth
+    }
+    setName(name) {
+        this.name = name
+    }
+}
+
+const player = new Player()
+
 // -------------------------------------------
 
 //                          args    function of the item
@@ -100,11 +117,23 @@ let oil_can = new Item("oil_can", () => {
     console.log("You use the oil can on the siezed door mechanism. The door swings open")
     roomCentral.locked = false
 })
+let wrench = new Item("wrench", () => {
+    if (player.position === roomEast) {
+        console.log(`You use the wrench to turn the power back on.
+        There is a flash as you heave the switch into position.`)
+        if (!player.bag.includes("hazmat_suit")) {
+            player.hp--
+            console.log(`The current shocks you. You cry out in pain as you drop the wrench.
+Your health is now ${player.hp}.`)
+        }
+    }
+})
 
 // need const obj "allItems" to pickup easier
 const allItems = {
     "book" : book,
-    "oil_can" : oil_can
+    "oil_can" : oil_can,
+    "wrench" : wrench
 }
 
 roomWest.setContents(["book"]);
@@ -115,28 +144,27 @@ roomSouth.setContents(["oil_can"])
 let wardrobe = new Activity("wardrobe", () => {console.log("Yes, it is a wardrobe")})
 let picture = new Activity("picture", () => {})
 
+function powerInteract() {
+    console.log(`The dials indicate that the main power is off. 
+There is the remains of a large rubber-coated lever next to the dials.
+This appears to be the master circuit breaker but the missing handle is a problem.
+Without a way to get some leverage, the switch won't budge.`)
+    if (player.bag.includes("wrench")) {
+        console.log('You might be able to use a large tool on this')
+    }
+}
+
+let power_console = new Activity("power_console", powerInteract)
+
 const allActivities = {
     "wardrobe" : wardrobe,
     "picture" : picture,
+    "power_console" : power_console
 }
 
 roomSouth.setActivities(["wardrobe"]);
 roomWest.setActivities(["picture"]);
-
-// ------------------------------------------- need player after room definitions
-
-class Player {
-    constructor() {
-        this.bag = [];
-        this.hp = 5;
-        this.position = roomSouth
-    }
-    setName(name) {
-        this.name = name
-    }
-}
-
-const player = new Player()
+roomEast.setActivities(["power_console"]);
 
 // -------------------------------------------
 
@@ -152,17 +180,17 @@ function askQuestion(query) {
 }
 
 function move(movement) {
-    const newRoom = player.position.adjoined[movement]
+    const newRoom = player.position.adjoined[movement];
     if (!newRoom) { 
         console.log("\x1b[31m%s\x1b[0m", "That is an invalid direction.")
         return false 
         }
-    //below don't need the "=== true"
+    //below doesn't need the "=== true"
     if (newRoom.locked === true) { 
         console.log("\x1b[31m%s\x1b[0m", "The door is locked.")
         return false 
         }
-    player.position = newRoom
+    player.position = newRoom;
     return true
     }
 
@@ -230,7 +258,7 @@ function moveValid(userResponse) {
     const allDirections = ['central','north','west','east','south']
     let regEx = /./;
     for (let i = 0; i < allDirections.length; i++) {
-        regEx = RegExp(`(move)|(go) .*${allDirections[i]}`);
+        regEx = RegExp(`((move)|(go)) .*${allDirections[i]}`);
         if (regEx.test(userResponse.toLowerCase())) {
             return move(allDirections[i])
         }
@@ -254,9 +282,9 @@ function checkValid(userResponse) {
     const allActivitiesList = Object.keys(allActivities);
     let regEx = /./;
     for (let i = 0; i < allActivitiesList.length; i++) {
-        regEx = RegExp(`take .*${allActivitiesList[i]}`);
+        regEx = RegExp(`check .*${allActivitiesList[i]}`);
         if (regEx.test(userResponse.toLowerCase())) {
-            return take(allActivitiesList[i]);
+            return check(allActivitiesList[i]);
         }
     }
     return false
@@ -264,10 +292,10 @@ function checkValid(userResponse) {
 
 function useValid(userResponse) {
     let regEx = /./;
-    for (let i = 0; i < player.bag; i++) {
-        regEx = RegExp(`take .*${player.bag[i]}`);
+    for (let i = 0; i < player.bag.length; i++) {
+        regEx = RegExp(`use .*${player.bag[i]}`);
         if (regEx.test(userResponse.toLowerCase())) {
-            return take(player.bag[i]);
+            return use(player.bag[i]);
         }
     }
     return false
@@ -328,15 +356,23 @@ while (true) {
     };
     // checks for "move" functionality
     moveValid(query);
+
     // checks for "take" functionality
     takeValid(query);
+
     // checks for "use" functionality
     useValid(query);
+
     // checks for "check" functionality
     checkValid(query);
+
     // checks for "bag" functionality
     if (query === "bag") {
-        console.log(player.bag)
+        if (player.bag === []) {
+            console.log("Your bag is empty")
+        } else {
+            console.log("You have: "+player.bag)
+        }
         continue
     }
     if (query === "search") {
@@ -350,6 +386,4 @@ while (true) {
     }
     // checks for "exit"
     if (query === "exit") {break}
-    
-    continue // continues if input is not valid
 }
