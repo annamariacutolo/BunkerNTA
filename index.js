@@ -78,33 +78,33 @@ let roomCentral = new Room("Central",
     "You enter a large, empty room. There are doors in each direction.",
     true,
     `The soft light from the lamps above provides poor but adequate visibility.
-    A bucket sits collecting murky water from leaking pipe. 
-    There is a stairwell in the centre that looks like you could use it to get to the surface above.
-    You see that there are four doors leading to rooms labelled North to South that you could go to.
-    Your living quarters appear to have been in the South room.`
+A bucket sits collecting murky water from leaking pipe. 
+There is a stairwell in the centre that looks like you could use it to get to the surface above.
+You see that there are four doors leading to rooms labelled North to South that you could go to.
+Your living quarters appear to have been in the South room.`
 )
 
 let roomNorth = new Room("North",
     "This room is filled with boxes and shelving.",
     true,
     `It is so full you can barely make out the pale yellow walls. 
-    You wonder what is being stored in this vault.`
+You wonder what is being stored in this vault.`
 )
 
 let roomEast = new Room("East",
     "This room has pieces of machinery adorning its red walls.",
     false,
     `This appears to be some sort of maintenance room.
-    Various equipment seems to be purifying the water and air in bunker.
-    There is also a console that controls the power supply.`
+Various equipment seems to be purifying the water and air in bunker.
+There is also a console that controls the power supply.`
 )
 
 let roomWest = new Room("West",
     "This room appears to be a library.",
     false,
     `You see a wooden desk and chair in the centre of the room. 
-    On the green walls hang a large landscape painting and a clock. 
-    There are several bookshelves full of books.`
+On the green walls hang a large landscape painting and a clock. 
+There are several bookshelves full of books.`
 )
 
 roomCentral.setAdjoined({
@@ -151,7 +151,7 @@ const player = new Player()
 // let book = new Item("book", () => {console.log("This is the book contents.")})
 let oil_can = new Item("oil_can", () => {
     console.log(`You use the oil can on the seized door mechanism. The door swings open.
-    You notice the can is labelled with the number 4.`)
+You notice the can is labelled with the number 4.`)
     roomCentral.locked = false
 })
 let plastic_fish = new Item("plastic_fish", () => { console.log("An exquisitely crafted plastic fish. It is red in colouration and appears to be a herring.") })
@@ -320,12 +320,12 @@ let vent = new Activity("vent", (current) => {
 let shelving = new Activity("shelving", () => { console.log("Shelving packed to the brim with assorted broken machinery and provisions.") });
 let power_console = new Activity("power_console", () => {
     console.log(`You examine the power console. 
-    You notice the number 2 painted above it.
-    The dials indicate that the main power is off. 
-    There are the remains of a large rubber-coated lever next to the dials.
-    This appears to be the master circuit breaker but the missing handle is a problem.
-    Without a way to get some leverage, the switch won't budge.
-    You might be able to use a large tool on this.`)
+You notice the number 2 painted above it.
+The dials indicate that the main power is off. 
+There are the remains of a large rubber-coated lever next to the dials.
+This appears to be the master circuit breaker but the missing handle is a problem.
+Without a way to get some leverage, the switch won't budge.
+You might be able to use a large tool on this.`)
     if (player.bag.includes("wrench")) {
         const wrenchPower = askQuestion("Would you like to try using the wrench as a lever? y/n ")
         if (wrenchPower === "y") {
@@ -340,7 +340,7 @@ let power_console = new Activity("power_console", () => {
 })
 let stairwell = new Activity("stairwell", () => {
     console.log(`A thick door sits between you and the outside world. 
-    There is a keypad with four coloured dots above it: red, yellow, green and blue.`)
+There is a keypad with four coloured dots above it: red, yellow, green and blue.`)
     if (!player.power) {
         console.log("The door won't budge. It seems the motors aren't being provided power.")
     }
@@ -359,7 +359,7 @@ let stairwell = new Activity("stairwell", () => {
                 console.log("You open the door. The bright light comes streaming in, blinding you momentarily.")
                 if (!player.hazmat) {
                     console.log(`Unfortunately for you, the outside world is horrendously irradiated and you die in seconds. 
-                    GAME OVER - YOU LOSE`)
+                GAME OVER - YOU LOSE`)
                     gameRunning = false
                     return
                 }
@@ -389,7 +389,7 @@ const allActivities = {
 }
 
 roomSouth.setActivities(["wardrobe"]);
-roomWest.setActivities(["painting", "desk", "bookcase", "clock", "chair", ]);
+roomWest.setActivities(["desk", "chair", "clock", "bookcase", "painting"]);
 roomEast.setActivities(["power_console", "toolbox"]);
 roomCentral.setActivities(["locked_door", "stairwell"]);
 roomNorth.setActivities(["heavy_box", "shelving", "vent"])
@@ -542,7 +542,7 @@ player.setName(playerName)
 // displays the help message
 help()
 
-console.log("\n" + "Hello " + player.name)
+console.log(`Hello ${player.name}.`)
 
 console.log("You awake in a room you do not recognise. You try to open the door but find it is seized shut.")
 
