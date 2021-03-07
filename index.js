@@ -136,9 +136,10 @@ class Player {
         this.glove = false;
         this.hazmat = false;
         this.power = false;
+        this.code = false;
     }
     setName(name) {
-        this.name = name
+        this.name = name;
     }
 }
 
@@ -319,7 +320,7 @@ let vent = new Activity("vent", (current) => {
 let shelving = new Activity("shelving", () => { console.log("Shelving packed to the brim with assorted broken machinery and provisions.") });
 let power_console = new Activity("power_console", () => {
     console.log(`You examine the power console. 
-    You notice the number 4 painted above it.
+    You notice the number 2 painted above it.
     The dials indicate that the main power is off. 
     There are the remains of a large rubber-coated lever next to the dials.
     This appears to be the master circuit breaker but the missing handle is a problem.
@@ -338,25 +339,35 @@ let power_console = new Activity("power_console", () => {
     }
 })
 let stairwell = new Activity("stairwell", () => {
-    console.log("A thick door sits between you and the outside world.")
+    console.log(`A thick door sits between you and the outside world. 
+    There is a keypad with four coloured dots above it: red, yellow, green and blue.`)
     if (!player.power) {
         console.log("The door won't budge. It seems the motors aren't being provided power.")
     }
     if (player.power) {
-        console.log("A green LED shines brightly by the door handle.")
-        const openMainDoor = askQuestion("Would you like to open the door? y/n ")
-        if (openMainDoor === "y") {
-            console.log("You open the door. The bright light comes streaming in, blinding you momentarily.")
-            if (!player.hazmat) {
-                console.log(`Unfortunately for you, the outside world is horrendously irradiated and you die in seconds. 
-                GAME OVER - YOU LOSE`)
-                gameRunning = false
-                return
+        console.log("The keypad has lit up.");
+        const code = askQuestion("Please enter the code.");
+        if (code == "2874") {
+            player.code = true
+        } else {
+            console.log("Incorrect code.")
+        }
+        if (player.code) {
+            console.log("A green LED shines brightly by the door handle.")
+            const openMainDoor = askQuestion("Would you like to open the door? y/n ")
+            if (openMainDoor === "y") {
+                console.log("You open the door. The bright light comes streaming in, blinding you momentarily.")
+                if (!player.hazmat) {
+                    console.log(`Unfortunately for you, the outside world is horrendously irradiated and you die in seconds. 
+                    GAME OVER - YOU LOSE`)
+                    gameRunning = false
+                    return
+                }
+                console.log(`The world appears hazy through your breath which fogs up the hazmat screen, but you're thankful for the protection.
+                Who knows the state of the world to which you have woken into?
+                You take your first steps into a world unfamilliar to you and wonder what will happen next.
+                GAME OVER - YOU WON`)
             }
-            console.log(`The world appears hazy through your breath which fogs up the hazmat screen, but you're thankful for the protection.
-            Who knows the state of the world to which you have woken into?
-            You take your first steps into a world unfamilliar to you and wonder what will happen next.
-            GAME OVER - YOU WON`)
         }
     }
 })
@@ -512,6 +523,13 @@ function search() {
     console.log("\x1b[35m%s\x1b[0m", "\n" + desc);
     return;
 }
+
+// function code(userResponse) {
+//     let regEx = /2874/;
+//     if (regEx.test(userResponse) {
+//         player.code = true;
+//     }
+// }
 
 // -------------------------------------------
 
