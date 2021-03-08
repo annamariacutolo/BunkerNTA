@@ -181,7 +181,7 @@ let key = new Item("key", () => { console.log("I wonder where this is from? Etch
 let bucket = new Item("bucket", () => { console.log("I probably should have left this where it was...") });
 let screwdriver = new Item("screwdriver", () => { console.log("A standard flat-headed screwdriver.") });
 let hazmat_suit = new Item("hazmat_suit", () => {
-    console.log("The hazmat suit you found in the vent.");
+    console.log("The hazmat_suit you found in the vent.");
     let hazmatWear = askQuestion("Would you like to put it on? y/n ");
     if (hazmatWear === "y") { player.hazmat = true };
 });
@@ -310,8 +310,8 @@ let vent = new Activity("vent", (current) => {
             } else if (player.bag.includes("screwdriver")) {
                 const ventScrews = askQuestion(`Standing on the bucket you can see something bright yellow within the vent. Would you like to use the screwdriver to remove the grating? y/n `)
                 if (ventScrews === "y") {
-                    console.log("You use the screwdriver to remove the vent grating and find a hazmat suit within. I wonder who put this here?")
-                    console.log("\x1b[33m%s\x1b[0m", "You take the hazmat suit.")
+                    console.log("You use the screwdriver to remove the vent grating and find a hazmat_suit within. I wonder who put this here?")
+                    console.log("\x1b[33m%s\x1b[0m", "You take the hazmat_suit.")
                     player.bag.push("hazmat_suit")
                 }
             }
@@ -361,14 +361,15 @@ There is a keypad with four coloured dots above it: red, yellow, green and blue.
                 console.log("You open the door. The bright light comes streaming in, blinding you momentarily.")
                 if (!player.hazmat) {
                     console.log(`Unfortunately for you, the outside world is horrendously irradiated and you die in seconds. 
-                GAME OVER - YOU LOSE`)
-                    gameRunning = false
+                GAME OVER - YOU LOSE`);
+                    gameRunning = false;
                     return
                 }
                 console.log(`The world appears hazy through your breath which fogs up the hazmat screen, but you're thankful for the protection.
                 Who knows the state of the world to which you have woken into?
                 You take your first steps into a world unfamilliar to you and wonder what will happen next.
-                GAME OVER - YOU WON`)
+                GAME OVER - YOU WON`);
+                gameRunning = false;
             }
         }
     }
@@ -490,9 +491,9 @@ function moveValid(userResponse) {
         }
     }
     regEx = RegExp(`((move)|(go)) *`);
-        if (regEx.test(userResponse.toLowerCase())) {
-            return move("")
-        }
+    if (regEx.test(userResponse.toLowerCase())) {
+        return move("")
+    }
     return false
 }
 
