@@ -465,7 +465,7 @@ function check(activity) {
 }
 
 function help() {
-    console.log("\x1b[36m%s\x1b[0m", "\n" + "\"move\" allows you to move between rooms, \n\
+    console.log("\x1b[36m%s\x1b[0m", "\n" + "\"move\" and a compass direction (e.g. north) allows you to move between rooms, \n\
 \"take\" allows you to take objects from the room, \n\
 \"bag\" allows you to check the contents of your bag, \n\
 \"use\" allows you to use items in your possesion, \n\
@@ -489,6 +489,10 @@ function moveValid(userResponse) {
             return move(allDirections['north'])
         }
     }
+    regEx = RegExp(`((move)|(go)) *`);
+        if (regEx.test(userResponse.toLowerCase())) {
+            return move("")
+        }
     return false
 }
 
@@ -496,7 +500,7 @@ function takeValid(userResponse) {
     const allItemsList = Object.keys(allItems);
     let regEx = /./;
     for (let i = 0; i < allItemsList.length; i++) {
-        regEx = RegExp(`take .*${allItemsList[i]}`);
+        regEx = RegExp(`take .*${allItemsList[i]}$`);
         if (regEx.test(userResponse.toLowerCase())) {
             return take(allItemsList[i]);
         }
