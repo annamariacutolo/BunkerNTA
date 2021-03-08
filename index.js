@@ -267,6 +267,7 @@ let locked_door = new Activity("locked_door", () => {
         if (openDoor === "y") {
             console.log("\x1b[33m%s\x1b[0m", "The key fits! The door swings open")
             roomNorth.locked = false;
+            roomCentral.setActivities(["stairwell"]);
         }
     }
 });
@@ -290,7 +291,7 @@ let heavy_box = new Activity("heavy_box", (current) => {
         console.log("The box lies sadly on its side where it fell.")
     }
 })
-const placedBucket = false
+let placedBucket = false
 let vent = new Activity("vent", (current) => {
     console.log("A vent sits high up on the wall.")
     if (!current.hasTriggered) {
@@ -305,7 +306,7 @@ let vent = new Activity("vent", (current) => {
             }
         } else if (hasBucket || placedBucket) {
             if (!player.bag.includes("screwdriver")) {
-                console.log(`Standing on the bucket you can see something bright yellow within the vent. The grating is held on by four screws. Perhaps there is a screwdriver around here somrwhere?`)
+                console.log(`Standing on the bucket you can see something bright yellow within the vent. The grating is held on by four screws. Perhaps there is a screwdriver around here somewhere?`)
             } else if (player.bag.includes("screwdriver")) {
                 const ventScrews = askQuestion(`Standing on the bucket you can see something bright yellow within the vent. Would you like to use the screwdriver to remove the grating? y/n `)
                 if (ventScrews === "y") {
@@ -335,6 +336,7 @@ You might be able to use a large tool on this.`)
                     console.log("\x1b[31m%s\x1b[0m", `The current shocks you! You cry out as you drop the wrench. \nYour health is now ${player.hp}.`)
             }
             player.power = true;
+            console.log("The power has been restored.")
         }
     }
 })
@@ -346,7 +348,7 @@ There is a keypad with four coloured dots above it: red, yellow, green and blue.
     }
     if (player.power) {
         console.log("The keypad has lit up.");
-        const code = askQuestion("Please enter the code.");
+        const code = askQuestion("Please enter the code: ");
         if (code == "2874") {
             player.code = true
         } else {
@@ -385,14 +387,15 @@ const allActivities = {
     "shelving": shelving,
     "purification_station": purification_station,
     "stairwell": stairwell,
-    "toolbox": toolbox
+    "toolbox": toolbox,
+    "vent": vent
 }
 
 roomSouth.setActivities(["wardrobe"]);
 roomWest.setActivities(["desk", "chair", "clock", "bookcase", "painting"]);
 roomEast.setActivities(["power_console", "toolbox"]);
 roomCentral.setActivities(["locked_door", "stairwell"]);
-roomNorth.setActivities(["heavy_box", "shelving", "vent"])
+roomNorth.setActivities(["heavy_box", "shelving", "vent"]);
 
 // FUNCTIONS -------------------------------------------
 
@@ -480,6 +483,12 @@ function moveValid(userResponse) {
             return move(allDirections[i])
         }
     }
+    if (player.position === roomSouth) {
+        regEx = RegExp(`((move)|(go)) *`);
+        if (regEx.test(userResponse.toLowerCase())) {
+            return move(allDirections['north'])
+        }
+    }
     return false
 }
 
@@ -557,7 +566,7 @@ while (gameRunning) {
         console.log(player.position.description);
         // need both conditions below bc empty array returns true and items may not exist
         // this returns the items currently in the room just entered
-        const ifItems = player.position.items && player.position.items.length
+        const ifItems = !!player.position.items && !!player.position.items.length
         if (ifItems) {
             let itemNames = [];
             for (const item of player.position.items) {
@@ -566,7 +575,7 @@ while (gameRunning) {
             console.log(`There is ${itemNames.join("; ")} in this room you could pick up.`);
         }
         // this returns the activities (interactable objects that can't be taken) currently in the room just entered
-        const ifActivity = player.position.activity && player.position.activity.length
+        const ifActivity = !!player.position.activity && !!player.position.activity.length
         if (ifActivity) {
             let activityNames = [];
             for (const activity of player.position.activity) {
