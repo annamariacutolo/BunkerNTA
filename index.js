@@ -158,7 +158,7 @@ let plastic_fish = new Item("plastic_fish", () => { console.log("An exquisitely 
 let wrench = new Item("wrench", () => { console.log("Heavy duty! This tool is etched with the number 8.") });
 let glove = new Item("glove", () => {
     console.log("A single heavy-duty insulating glove.");
-    const glove = askQuestion("Would you like to put it on? y/n ");
+    let glove = askQuestion("Would you like to put it on? y/n ");
     if (glove === "y") { player.glove = true };
 });
 let pen = new Item("pen", () => { console.log("This appears to be an ordinary pen.") });
@@ -182,7 +182,7 @@ let bucket = new Item("bucket", () => { console.log("I probably should have left
 let screwdriver = new Item("screwdriver", () => { console.log("A standard flat-headed screwdriver.") });
 let hazmat_suit = new Item("hazmat_suit", () => {
     console.log("The hazmat suit you found in the vent.");
-    const hazmatWear = askQuestion("Would you like to put it on? y/n ");
+    let hazmatWear = askQuestion("Would you like to put it on? y/n ");
     if (hazmatWear === "y") { player.hazmat = true };
 });
 
