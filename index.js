@@ -538,7 +538,7 @@ while (gameRunning) {
         }
         // this tells us the room is empty if there aren't any items or activities
         if (!ifItems && !ifActivity) { console.log("This room is empty.") }
-        const query = await askQuestion("What would you like to do? ");
+        const query = askQuestion("What would you like to do? ");
         // restarts the game loop if no query is input
         if (!query) {
             continue;
