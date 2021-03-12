@@ -2,14 +2,19 @@
 
 import readline from 'readline';
 import promptSync from 'prompt-sync';
+import colors from 'colors';
 const prompt = promptSync({ sigint: true });
 
+//Import custom modules
+import {allItems} from "./items.js";
+
 class Room {
-    constructor(name, flavText, locked, description) {
+    constructor(name, flavText, locked, description, colour) {
         this.name = name;
         this.flavText = flavText;
         this.locked = locked;
         this.description = description;
+        this.colour = colour;
     }
     setAdjoined(adjoined) {
         this.adjoined = adjoined;
@@ -22,13 +27,6 @@ class Room {
     }
     addContents(storedItems) {
         this.items = [...this.items, ...storedItems];
-    }
-}
-
-class Item {
-    constructor(name, action) {
-        this.name = name;
-        this.action = action;
     }
 }
 
@@ -71,7 +69,8 @@ function askQuestion(query) {
 let roomSouth = new Room("South",
     "This room loosely resembles a bedroom.",
     false,
-    "The walls are painted a dull shade of blue."
+    "The walls are painted a dull shade of blue.",
+    colors.blue
 )
 
 let roomCentral = new Room("Central",
@@ -81,14 +80,16 @@ let roomCentral = new Room("Central",
 A bucket sits collecting murky water from leaking pipe. 
 There is a stairwell in the centre that looks like you could use it to get to the surface above.
 You see that there are four doors leading to rooms labelled North to South that you could go to.
-Your living quarters appear to have been in the South room.`
+Your living quarters appear to have been in the South room.`,
+    colors.white
 )
 
 let roomNorth = new Room("North",
     "This room is filled with boxes and shelving.",
     true,
     `It is so full you can barely make out the pale yellow walls. 
-You wonder what is being stored in this vault.`
+You wonder what is being stored in this vault.`,
+    colors.yellow
 )
 
 let roomEast = new Room("East",
@@ -96,7 +97,8 @@ let roomEast = new Room("East",
     false,
     `This appears to be some sort of maintenance room.
 Various equipment seems to be purifying the water and air in bunker.
-There is also a console that controls the power supply.`
+There is also a console that controls the power supply.`,
+    colors.red
 )
 
 let roomWest = new Room("West",
@@ -104,7 +106,8 @@ let roomWest = new Room("West",
     false,
     `You see a wooden desk and chair in the centre of the room. 
 On the green walls hang a large landscape painting and a clock. 
-There are several bookshelves full of books.`
+There are several bookshelves full of books.`,
+    colors.green
 )
 
 roomCentral.setAdjoined({
@@ -145,74 +148,7 @@ class Player {
 
 const player = new Player()
 
-// ITEMS -------------------------------------------
 
-//                              args    function of the item
-// let book = new Item("book", () => {console.log("This is the book contents.")})
-let oil_can = new Item("oil_can", () => {
-    console.log(`You use the oil can on the seized door mechanism. The door swings open.
-You notice the can is labelled with the number 4.`)
-    roomCentral.locked = false
-})
-let plastic_fish = new Item("plastic_fish", () => { console.log("An exquisitely crafted plastic fish. It is red in colouration and appears to be a herring.") })
-let wrench = new Item("wrench", () => { console.log("Heavy duty! This tool is etched with the number 8.") });
-let glove = new Item("glove", () => {
-    console.log("A single heavy-duty insulating glove.");
-    let glove = askQuestion("Would you like to put it on? y/n ");
-    if (glove === "y") { player.glove = true };
-});
-let pen = new Item("pen", () => { console.log("This appears to be an ordinary pen.") });
-let paper = new Item("paper", () => console.log(`There is a sentence written on the paper with words missing:
-\"The ___ is in the ____ of the _____.\"`));
-let book_1 = new Item("book_1", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"painting\"", " is highlighted.") });
-let book_2 = new Item("book_2", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"drawer\"", " is highlighted.") });
-let book_3 = new Item("book_3", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"book\"", " is highlighted.") });
-let book_4 = new Item("book_4", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"paper\"", " is highlighted.") });
-let book_5 = new Item("book_5", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"key\"", " is highlighted.") });
-let book_6 = new Item("book_6", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"note\"", " is highlighted.") });
-let book_7 = new Item("book_7", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"desk\"", " is highlighted.") });
-let book_8 = new Item("book_8", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"base\"", " is highlighted.") });
-let book_9 = new Item("book_9", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"clock\"", " is highlighted.") });
-let book_10 = new Item("book_10", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"pen\"", " is highlighted.") });
-let book_11 = new Item("book_11", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"knife\"", " is highlighted.") });
-let book_12 = new Item("book_12", () => { console.log("%s\x1b[33m%s\x1b[0m%s", "One page has a folded corner. The word ", "\"chair\"", " is highlighted.") });
-let knife = new Item("knife", () => { console.log("Fairly blunt but sharp enough to damage furniture.") })
-let key = new Item("key", () => { console.log("I wonder where this is from? Etched into it is the number 7.") });
-let bucket = new Item("bucket", () => { console.log("I probably should have left this where it was...") });
-let screwdriver = new Item("screwdriver", () => { console.log("A standard flat-headed screwdriver.") });
-let hazmat_suit = new Item("hazmat_suit", () => {
-    console.log("The hazmat_suit you found in the vent.");
-    let hazmatWear = askQuestion("Would you like to put it on? y/n ");
-    if (hazmatWear === "y") { player.hazmat = true };
-});
-
-
-// need const obj "allItems" to pickup easier
-const allItems = {
-    "oil_can": oil_can,
-    "plastic_fish": plastic_fish,
-    "wrench": wrench,
-    "glove": glove,
-    "pen": pen,
-    "paper": paper,
-    "book_1": book_1,
-    "book_2": book_2,
-    "book_3": book_3,
-    "book_4": book_4,
-    "book_5": book_5,
-    "book_6": book_6,
-    "book_7": book_7,
-    "book_8": book_8,
-    "book_9": book_9,
-    "book_10": book_10,
-    "book_11": book_11,
-    "book_12": book_12,
-    "knife": knife,
-    "key": key,
-    "bucket": bucket,
-    "screwdriver": screwdriver,
-    "hazmat_suit": hazmat_suit,
-}
 
 roomSouth.setContents(["oil_can", "plastic_fish"]);
 
@@ -367,13 +303,24 @@ There is a keypad with four coloured dots above it: red, yellow, green and blue.
                 }
                 console.log(`The world appears hazy through your breath which fogs up the hazmat screen, but you're thankful for the protection.
                 Who knows the state of the world to which you have woken into?
-                You take your first steps into a world unfamilliar to you and wonder what will happen next.
-                GAME OVER - YOU WON`);
+                You take your first steps into a world unfamilliar to you and wonder what will happen next.`)
+                console.log(colors.rainbow(`GAME OVER - YOU WON`));
                 gameRunning = false;
             }
         }
     }
 })
+let seized_door = new Activity("seized_door", () => {
+    console.log("A heavy, metal door which appears to be rusted shut.");
+    if (player.bag.includes("oil_can")) {
+        const openDoor = askQuestion("Would you like to try using the oil_can? y/n ");
+        if (openDoor === "y") {
+            console.log("\x1b[33m%s\x1b[0m", "Success! The door swings open")
+            roomCentral.locked = false;
+            roomSouth.setActivities(["wardrobe"]);
+        }
+    }
+});
 
 const allActivities = {
     "wardrobe": wardrobe,
@@ -389,10 +336,11 @@ const allActivities = {
     "purification_station": purification_station,
     "stairwell": stairwell,
     "toolbox": toolbox,
-    "vent": vent
+    "vent": vent,
+    "seized_door": seized_door
 }
 
-roomSouth.setActivities(["wardrobe"]);
+roomSouth.setActivities(["wardrobe", "seized_door"]);
 roomWest.setActivities(["desk", "chair", "clock", "bookcase", "painting"]);
 roomEast.setActivities(["power_console", "toolbox"]);
 roomCentral.setActivities(["locked_door", "stairwell"]);
@@ -450,7 +398,7 @@ function use(item) {
         console.log("\x1b[31m%s\x1b[0m", "That item is not in your bag.")
         return false
     }
-    allItems[item].action();
+    allItems[item].action(player);
 }
 
 // function to check Activity
@@ -472,6 +420,7 @@ function help() {
 \"use\" allows you to use items in your possesion,
 \"check\" allows you to examine immovable objects in the room,
 \"exit\" exits the game,
+\"search\" allows you to examine the room more closely,
 \"help\" brings up this help message.`)
 }
 
@@ -534,7 +483,7 @@ function useValid(userResponse) {
 
 function search() {
     let desc = player.position.description;
-    console.log("\x1b[35m%s\x1b[0m", "\n" + desc);
+    console.log(player.position.colour("\n" + desc));
     return;
 }
 
@@ -566,9 +515,8 @@ let gameRunning = true
 while (gameRunning) {
     if (player.hp > 0) {
         console.log("");
-        console.log("\x1b[35m%s\x1b[0m", `You are in the ${player.position.name} room.`);
-        console.log(player.position.flavText);
-        console.log(player.position.description);
+        console.log(colors.magenta(`You are in the ${player.position.name} room.`));
+        console.log(colors.italic(player.position.flavText));
         // need both conditions below bc empty array returns true and items may not exist
         // this returns the items currently in the room just entered
         const ifItems = !!player.position.items && !!player.position.items.length
@@ -612,7 +560,7 @@ while (gameRunning) {
             if (player.bag === []) {
                 console.log("Your bag is empty.");
             } else {
-                console.log(`You have: ${player.bag}.`);
+                console.log(`You have: ${player.bag.join("; ")}.`);
             }
             continue;
         }
