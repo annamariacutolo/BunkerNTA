@@ -131,7 +131,7 @@ roomWest.setAdjoined({
 class Player {
     constructor() {
         this.bag = [];
-        this.hp = 3;
+        this.hp = 2;
         this.position = roomSouth;
         this.glove = false;
         this.hazmat = false;
@@ -466,13 +466,13 @@ function check(activity) {
 }
 
 function help() {
-    console.log("\x1b[36m%s\x1b[0m", "\n" + "\"move\" and a compass direction (e.g. north) allows you to move between rooms, \n\
-\"take\" allows you to take objects from the room, \n\
-\"bag\" allows you to check the contents of your bag, \n\
-\"use\" allows you to use items in your possesion, \n\
-\"check\" allows you to examine immovable objects in the room, \n\
-\"exit\" exits the game, \n\
-\"help\" brings up this help message.")
+    console.log("\x1b[36m%s\x1b[0m", "\n" + `\"move\" and a compass direction (e.g. north) allows you to move between rooms,
+\"take\" allows you to take objects from the room,
+\"bag\" allows you to check the contents of your bag,
+\"use\" allows you to use items in your possesion,
+\"check\" allows you to examine immovable objects in the room,
+\"exit\" exits the game,
+\"help\" brings up this help message.`)
 }
 
 function moveValid(userResponse) {
